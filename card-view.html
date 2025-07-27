@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jewellery Inventory Management</title>
+    <title>Jewellery Inventory - Card View</title>
     <style>
         * {
             margin: 0;
@@ -35,14 +35,6 @@
             position: relative;
         }
 
-        .nav-buttons {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            gap: 10px;
-        }
-
         .header h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
@@ -52,6 +44,41 @@
         .header p {
             font-size: 1.1rem;
             opacity: 0.9;
+        }
+
+        .nav-buttons {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.3);
         }
 
         .filters-section {
@@ -101,79 +128,88 @@
             gap: 15px;
             justify-content: center;
             flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #5a6268;
-            transform: translateY(-2px);
-        }
-
-        .table-container {
-            overflow-x: auto;
-            padding: 20px;
-        }
-
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 1000;
         }
 
-        .data-table th {
+        .cards-container {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            min-height: 400px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 1px solid #e9ecef;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            border-bottom: 2px solid #f8f9fa;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 5px;
+        }
+
+        .card-category {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 15px 12px;
-            text-align: left;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
             font-weight: 600;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            display: inline-block;
         }
 
-        .data-table td {
-            padding: 12px;
-            border-bottom: 1px solid #e9ecef;
-            font-size: 14px;
+        .card-content {
+            display: grid;
+            gap: 12px;
         }
 
-        .data-table tbody tr:hover {
-            background-color: #f8f9fa;
-            transform: scale(1.01);
-            transition: all 0.2s ease;
+        .card-field {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f8f9fa;
         }
 
-        .data-table tbody tr:nth-child(even) {
-            background-color: #f8f9fa;
+        .card-field:last-child {
+            border-bottom: none;
+        }
+
+        .field-label {
+            font-weight: 600;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .field-value {
+            color: #495057;
+            font-weight: 500;
         }
 
         .stats-section {
@@ -214,6 +250,7 @@
             padding: 50px;
             color: #6c757d;
             font-size: 1.2rem;
+            grid-column: 1 / -1;
         }
 
         @media (max-width: 768px) {
@@ -232,22 +269,15 @@
             }
 
             .filter-buttons {
-                flex-direction: column;
-                align-items: center;
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
             }
 
-            .btn {
-                width: 100%;
-                max-width: 200px;
-            }
-
-            .data-table {
-                font-size: 12px;
-            }
-
-            .data-table th,
-            .data-table td {
-                padding: 8px 6px;
+            .cards-container {
+                grid-template-columns: 1fr;
+                padding: 20px;
             }
 
             .stats-section {
@@ -281,6 +311,11 @@
             .filters-section {
                 padding: 15px;
             }
+
+            .filter-buttons {
+                width: 90%;
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -288,19 +323,15 @@
     <div class="container">
         <div class="header">
             <div class="nav-buttons">
-                <button class="btn btn-primary">Grid View</button>
-                <button class="btn btn-secondary" onclick="window.location.href='card-view.html'">Card View</button>
+                <button class="btn btn-secondary" onclick="window.location.href='index.html'">Grid View</button>
+                <button class="btn btn-primary">Card View</button>
             </div>
-            <h1>💎 Jewellery Inventory Management</h1>
-            <p>Comprehensive inventory tracking and filtering system</p>
+            <h1>💎 Jewellery Inventory</h1>
+            <p>Compact Card View with Advanced Filtering</p>
         </div>
 
         <div class="filters-section">
             <div class="filters-grid">
-                <div class="filter-group">
-                    <label for="snoFilter">S. No.</label>
-                    <input type="text" id="snoFilter" placeholder="Search by S. No.">
-                </div>
                 <div class="filter-group">
                     <label for="categoryFilter">Category</label>
                     <select id="categoryFilter">
@@ -314,14 +345,6 @@
                 <div class="filter-group">
                     <label for="barcodeFilter">Barcode</label>
                     <input type="text" id="barcodeFilter" placeholder="Search by barcode">
-                </div>
-                <div class="filter-group">
-                    <label for="hsnFilter">HSN No.</label>
-                    <input type="text" id="hsnFilter" placeholder="Search by HSN No.">
-                </div>
-                <div class="filter-group">
-                    <label for="qtyFilter">Quantity</label>
-                    <input type="number" id="qtyFilter" placeholder="Search by quantity">
                 </div>
             </div>
             <div class="filter-buttons">
@@ -349,22 +372,8 @@
             </div>
         </div>
 
-        <div class="table-container">
-            <table class="data-table" id="jewelleryTable">
-                <thead>
-                    <tr>
-                        <th>S. No.</th>
-                        <th>Category</th>
-                        <th>Item Name</th>
-                        <th>Barcode</th>
-                        <th>HSN No.</th>
-                        <th>Qty.</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    <!-- Data will be populated here -->
-                </tbody>
-            </table>
+        <div class="cards-container" id="cardsContainer">
+            <!-- Cards will be populated here -->
         </div>
     </div>
 
@@ -508,7 +517,7 @@
         // Initialize the page
         document.addEventListener('DOMContentLoaded', function() {
             populateCategoryFilter();
-            displayData();
+            displayCards();
             updateStats();
         });
 
@@ -525,65 +534,73 @@
             });
         }
 
-        // Display data in table
-        function displayData() {
-            const tableBody = document.getElementById('tableBody');
-            tableBody.innerHTML = '';
+        // Display cards
+        function displayCards() {
+            const container = document.getElementById('cardsContainer');
+            container.innerHTML = '';
 
             if (filteredData.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="6" class="no-results">No items found matching the filters</td></tr>';
+                container.innerHTML = '<div class="no-results">No items found matching the filters</div>';
                 return;
             }
 
             filteredData.forEach(item => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${item.sno}</td>
-                    <td>${item.category}</td>
-                    <td>${item.itemName}</td>
-                    <td>${item.barcode}</td>
-                    <td>${item.hsnNo}</td>
-                    <td>${item.qty}</td>
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-title">${item.itemName}</div>
+                        <div class="card-category">${item.category}</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-field">
+                            <span class="field-label">S. No.</span>
+                            <span class="field-value">${item.sno}</span>
+                        </div>
+                        <div class="card-field">
+                            <span class="field-label">Barcode</span>
+                            <span class="field-value">${item.barcode}</span>
+                        </div>
+                        <div class="card-field">
+                            <span class="field-label">HSN No.</span>
+                            <span class="field-value">${item.hsnNo}</span>
+                        </div>
+                        <div class="card-field">
+                            <span class="field-label">Quantity</span>
+                            <span class="field-value">${item.qty}</span>
+                        </div>
+                    </div>
                 `;
-                tableBody.appendChild(row);
+                container.appendChild(card);
             });
         }
 
         // Apply filters
         function applyFilters() {
-            const snoFilter = document.getElementById('snoFilter').value.toLowerCase();
             const categoryFilter = document.getElementById('categoryFilter').value;
             const itemNameFilter = document.getElementById('itemNameFilter').value.toLowerCase();
             const barcodeFilter = document.getElementById('barcodeFilter').value.toLowerCase();
-            const hsnFilter = document.getElementById('hsnFilter').value.toLowerCase();
-            const qtyFilter = document.getElementById('qtyFilter').value;
 
             filteredData = jewelleryData.filter(item => {
-                const snoMatch = !snoFilter || item.sno.toString().includes(snoFilter);
                 const categoryMatch = !categoryFilter || item.category === categoryFilter;
                 const itemNameMatch = !itemNameFilter || item.itemName.toLowerCase().includes(itemNameFilter);
                 const barcodeMatch = !barcodeFilter || item.barcode.toLowerCase().includes(barcodeFilter);
-                const hsnMatch = !hsnFilter || item.hsnNo.toLowerCase().includes(hsnFilter);
-                const qtyMatch = !qtyFilter || item.qty.toString().includes(qtyFilter);
 
-                return snoMatch && categoryMatch && itemNameMatch && barcodeMatch && hsnMatch && qtyMatch;
+                return categoryMatch && itemNameMatch && barcodeMatch;
             });
 
-            displayData();
+            displayCards();
             updateStats();
         }
 
         // Clear all filters
         function clearFilters() {
-            document.getElementById('snoFilter').value = '';
             document.getElementById('categoryFilter').value = '';
             document.getElementById('itemNameFilter').value = '';
             document.getElementById('barcodeFilter').value = '';
-            document.getElementById('hsnFilter').value = '';
-            document.getElementById('qtyFilter').value = '';
 
             filteredData = [...jewelleryData];
-            displayData();
+            displayCards();
             updateStats();
         }
 
@@ -602,7 +619,7 @@
 
         // Add event listeners for real-time filtering
         document.addEventListener('DOMContentLoaded', function() {
-            const filterInputs = ['snoFilter', 'itemNameFilter', 'barcodeFilter', 'hsnFilter', 'qtyFilter'];
+            const filterInputs = ['itemNameFilter', 'barcodeFilter'];
             
             filterInputs.forEach(inputId => {
                 document.getElementById(inputId).addEventListener('input', applyFilters);
